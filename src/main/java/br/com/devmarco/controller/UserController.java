@@ -16,9 +16,11 @@ import java.util.List;
 
 @Path("/user")
 public class UserController {
-
+    /*
     @Inject
     UserService userService;
+
+     */
 
     @GET
     public Uni<List<UserDTO>> findAll(){

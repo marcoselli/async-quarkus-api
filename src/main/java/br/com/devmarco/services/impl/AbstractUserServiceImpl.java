@@ -2,6 +2,7 @@ package br.com.devmarco.services.impl;
 
 
 import br.com.devmarco.repositories.User;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
@@ -10,7 +11,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractUserServiceImpl {
+public abstract class AbstractUserServiceImpl  {
 
     public final static String USER_NAME_COL = "userName";
     public final static String USER_PASSWORD_COL = "userPassword";

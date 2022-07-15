@@ -19,7 +19,7 @@ services:
       - AWS_DEFAULT_REGION=us-east-1
       - AWS_DEFAULT_OUTPUT=json
     healthcheck:
-      test: [ "CMD-SHELL", "awslocal dynamodb wait table-exists --table-name dev_Wallet" ]
+      test: [ "CMD-SHELL", "awslocal dynamodb wait table-exists --table-name TB_USER" ]
       interval: 5s
       timeout: 90s
       retries: 20

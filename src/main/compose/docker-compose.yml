@@ -1,0 +1,49 @@
+version: '3.3'
+services:
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - 4566:4566
+    environment:
+      - SERVICES=dynamodb,sqs, secretsmanager
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - PORT_WEB_UI=8080
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
+      - DOCKER_HOST=${DOCKER_LOCATION}
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_OUTPUT=json
+    healthcheck:
+      test: [ "CMD-SHELL", "awslocal dynamodb wait table-exists --table-name dev_Wallet" ]
+      interval: 5s
+      timeout: 90s
+      retries: 20
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "./notification.json:/opt/code/localstack/notification.json"
+      - "./init-aws.sh:/docker-entrypoint-initaws.d/init-aws.sh"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+  consul:
+    image: consul
+    container_name: consul
+    ports:
+      - "8500:8500"
+      - "4567:8080"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    volumes:
+      - "${TMPDIR:-/tmp/consul/data}:/consul/data"
+
+ 
+  consul-init:
+    image: consul
+    command: 'consul kv import -http-addr=http://consul:8500 @/tmp/consul-values.json'
+    depends_on:
+      - consul
+    volumes:
+      - "./consul-values.json:/tmp/consul-values.json"

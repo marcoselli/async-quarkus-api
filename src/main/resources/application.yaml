@@ -1,0 +1,13 @@
+quarkus:
+  application:
+    name: cadastro-pessoa
+  ssl:
+    native: true
+  native:
+    additional-build-args: --initialize-at-run-time=org.apache.commons.lang3.RandomStringUtils
+  consul-config:
+    agent:
+      host-port: "localhost:8500"
+    enabled: true
+    properties-value-keys: ${quarkus.profile}/${quarkus.application.name}/config
+

@@ -16,17 +16,13 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserServiceImpl extends AbstractUserServiceImpl{
-    AmazonDynamoDBAsync dynamoDB;
+    @Inject
+    AmazonDynamoDBAsyncClient dynamoDB;
 
     @Inject
     AwsConfig awsConfig;
 
 
-    public UserServiceImpl(){
-        this.dynamoDB = AmazonDynamoDBAsyncClientBuilder.standard()
-                .withRegion(awsConfig.getDefaultRegion())
-                .build();
-    }
     public Uni<List<UserDTO>> findAll() {
         return Uni.createFrom().item(() -> dynamoDB.scan(scanRequest()))
                 .map(res -> res.getItems().stream().map(User::from).collect(Collectors.toList()))

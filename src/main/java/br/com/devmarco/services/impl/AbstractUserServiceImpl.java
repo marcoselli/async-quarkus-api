@@ -2,7 +2,6 @@ package br.com.devmarco.services.impl;
 
 
 import br.com.devmarco.repositories.User;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;

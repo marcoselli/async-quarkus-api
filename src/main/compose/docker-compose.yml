@@ -5,7 +5,7 @@ services:
     container_name: localstack
     image: localstack/localstack
     ports:
-      - 4566:4566
+      - 8000:4566
     environment:
       - SERVICES=dynamodb,sqs, secretsmanager
       - DEBUG=${DEBUG- }
@@ -39,7 +39,7 @@ services:
     volumes:
       - "${TMPDIR:-/tmp/consul/data}:/consul/data"
 
- 
+
   consul-init:
     image: consul
     command: 'consul kv import -http-addr=http://consul:8500 @/tmp/consul-values.json'

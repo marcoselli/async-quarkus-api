@@ -1,6 +1,6 @@
 package br.com.devmarco.adapters;
 
-import br.com.devmarco.repositories.User;
+import br.com.devmarco.repositories.models.UserEntity;
 import br.com.devmarco.repositories.dtos.UserDTO;
 
 import java.util.List;
@@ -8,27 +8,33 @@ import java.util.stream.Collectors;
 
 public class UserAdapter {
 
-    public static UserDTO convertTo(User user){
+    public static UserDTO convertTo(UserEntity userEntity){
         return UserDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .password(user.getPassword())
+                .id(userEntity.getId())
+                .nickname(userEntity.getNickname())
+                .password(userEntity.getPassword())
+                .createdAt(userEntity.getCreatedAt())
+                .updatedAt(userEntity.getUpdatedAt())
+                .status(userEntity.getStatus())
                 .build();
     }
 
-    public static List<UserDTO> convertListToDTO(List<User> users){
-        return users.stream().map(user -> convertTo(user)).collect(Collectors.toList());
+    public static List<UserDTO> convertListToDTO(List<UserEntity> userEntities){
+        return userEntities.stream().map(userEntity -> convertTo(userEntity)).collect(Collectors.toList());
     }
 
-    public static User convertTo(UserDTO userDTO){
-        return User.builder()
+    public static UserEntity convertTo(UserDTO userDTO){
+        return UserEntity.builder()
                 .id(userDTO.getId())
-                .name(userDTO.getName())
+                .nickname(userDTO.getNickname())
                 .password(userDTO.getPassword())
+                .createdAt(userDTO.getCreatedAt())
+                .updatedAt(userDTO.getUpdatedAt())
+                .status(userDTO.getStatus())
                 .build();
     }
 
-    public static List<User> convertListToUser(List<UserDTO> userDTOS){
+    public static List<UserEntity> convertListToUser(List<UserDTO> userDTOS){
         return userDTOS.stream().map(user -> convertTo(user)).collect(Collectors.toList());
     }
 }

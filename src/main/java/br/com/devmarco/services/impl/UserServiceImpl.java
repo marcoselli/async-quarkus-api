@@ -1,49 +1,61 @@
 package br.com.devmarco.services.impl;
 
 import br.com.devmarco.adapters.UserAdapter;
-import br.com.devmarco.configs.AwsConfig;
-import br.com.devmarco.repositories.User;
+import br.com.devmarco.repositories.UserRepository;
 import br.com.devmarco.repositories.dtos.UserDTO;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClientBuilder;
+
+import br.com.devmarco.repositories.enums.StatusFlag;
+import br.com.devmarco.services.UserService;
 import io.smallrye.mutiny.Uni;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @ApplicationScoped
-public class UserServiceImpl extends AbstractUserServiceImpl{
-    @Inject
-    AmazonDynamoDBAsyncClient dynamoDB;
+public class UserServiceImpl implements UserService {
 
     @Inject
-    AwsConfig awsConfig;
+    UserRepository userRepository;
 
+    @Override
+    public Uni<UserDTO> create(UserDTO userDTO) {
+        return userRepository.create(UserAdapter.convertTo(prepareUserCreation(userDTO)))
+                .map(res -> UserAdapter.convertTo(res));
+    }
 
+    private UserDTO prepareUserCreation(UserDTO userDTO){
+        userDTO.setId(UUID.randomUUID().toString());
+        userDTO.setCreatedAt(LocalDate.now());
+        userDTO.setStatus(StatusFlag.ACTIVE);
+
+        return userDTO;
+    }
+
+    @Override
+    public Uni<UserDTO> update(UserDTO userDTO) {
+        return userRepository.update(UserAdapter.convertTo(userDTO))
+                .map(res -> UserAdapter.convertTo(res));
+    }
+
+    @Override
+    public Uni<UserDTO> delete(String nickname) {
+        return userRepository.delete(nickname)
+                .map(res -> UserAdapter.convertTo(res));
+    }
+
+    @Override
     public Uni<List<UserDTO>> findAll() {
-        return Uni.createFrom().item(() -> dynamoDB.scan(scanRequest()))
-                .map(res -> res.getItems().stream().map(User::from).collect(Collectors.toList()))
-                .map(list -> UserAdapter.convertListToDTO(list));
+        return userRepository.findAll()
+                .map(res -> UserAdapter.convertListToDTO(res));
     }
 
-    public Uni<List<UserDTO>> create(User user) {
-        /*
-        return Uni.createFrom().completionStage(() -> dynamoDB.putItem(putRequest(user)))
-                .onItem().ignore().andSwitchTo(this::findAll);
+    @Override
+    public Uni<UserDTO> findByNickname(String nickname) {
 
-         */
-        return null;
-    }
-
-    public Uni<UserDTO> find(Long userId) {
-        /*
-        return Uni.createFrom().completionStage(() -> dynamoDB.getItem(getRequest(name)))
-                .onItem().transform(resp -> UserDTO.from(resp.item()));
-
-         */
-        return  null;
+        return userRepository.findByNickname(nickname)
+                .map(res -> UserAdapter.convertTo(res));
     }
 }
